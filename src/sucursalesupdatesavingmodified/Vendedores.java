@@ -60,6 +60,7 @@ public class Vendedores extends javax.swing.JFrame {
     String Celular;
     String ClaveVendedor;
     String PuestoVendedor;
+    int PuestoMvendedor;
     String FechaIngreso;
     String FechaBaja;
     Date Fecha1;
@@ -355,23 +356,25 @@ public class Vendedores extends javax.swing.JFrame {
     }
 
     public void PostgreSUpdateEmpleados() {
-        boolean[] caja = new boolean[9];
+        boolean[] cajas = new boolean[11];
         boolean cajaLlenas = false;
+        cajas[0] = jTextModificarNombre.getText().isEmpty();
+        cajas[1] = jTextModificarApaterno.getText().isEmpty();
+        cajas[2] = jTextModificarAmaterno.getText().isEmpty();
+        cajas[3] = jTextModificarCalle.getText().isEmpty();
+        cajas[4] = jTextModificarColonia.getText().isEmpty();
+        cajas[5] = jTextModificarTelefono.getText().isEmpty();
+        cajas[6] = jTextModificarCiudad.getText().isEmpty();
+        cajas[7] = jComboModificarEstado.getSelectedItem() == "----------";
+        cajas[8] = jTextModificarEmail.getText().isEmpty();
+        cajas[9] = jTextModificarCodigoPostal.getText().isEmpty();
+        cajas[10] = jComboModificarPuesto1.getSelectedItem() == "----------";
         Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-        caja[0] = jTextModificarNombre.getText().isEmpty();
-        caja[1] = jTextModificarApaterno.getText().isEmpty();
-        caja[2] = jTextModificarAmaterno.getText().isEmpty();
-        caja[3] = jTextModificarCalle.getText().isEmpty();
-        caja[4] = jTextModificarColonia.getText().isEmpty();
-        caja[5] = jComboModificarEstado.getSelectedItem() == "----------";
-        caja[6] = jTextModificarCiudad.getText().isEmpty();
-        caja[7] = jTextModificarCodigoPostal.getText().isEmpty();
-        caja[8] = jTextModificarEmail.getText().isEmpty();
-        String email = jTextEmail.getText();
+        String email = jTextModificarEmail.getText();
         Matcher mather = pattern.matcher(email);
-        if (caja[0] || caja[1] || caja[2] || caja[3] || caja[4] || caja[5] || caja[6] || caja[7] || caja[8] || caja[9] || caja[10] || caja[11]) {
+        if (cajas[0] || cajas[1] || cajas[2] || cajas[3] || cajas[4] || cajas[5] || cajas[6] || cajas[7] || cajas[8] || cajas[9] || cajas[10]) {
             cajaLlenas = true;
-            JOptionPane.showMessageDialog(null, "Debe indicar la clave del vendedor: ", "Importante", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una fila: ", "Importante", JOptionPane.INFORMATION_MESSAGE);
         } else if (mather.find() == false) {
             cajaLlenas = true;
             JOptionPane.showMessageDialog(rootPane, "El email es invalido..\n Ejemplo: example@example.ejp");
@@ -382,32 +385,62 @@ public class Vendedores extends javax.swing.JFrame {
             Amaterno = jTextModificarAmaterno.getText();
             Calle = jTextModificarCalle.getText();
             Colonia = jTextModificarColonia.getText();
+            Telefono = jTextModificarTelefono.getText();
             Estado = jComboModificarEstado.getSelectedItem().toString();
             Pais = jTextModificarCiudad.getText();
             CodigoPostal = jTextModificarCodigoPostal.getText();
             Email = jTextModificarEmail.getText();
-            PuestoVendedor_id = 0;
-            System.out.println("Clave del vendedor a modificar: " + claveDelVendedor);
+            PuestoMvendedor = 0;
+            if (null != jComboModificarPuesto1.getSelectedItem().toString()) {
+                switch (jComboModificarPuesto1.getSelectedItem().toString()) {
+                    case "Vendedora":
+                        PuestoMvendedor = 1;
+                        break;
+                    case "Gerente":
+                        PuestoMvendedor = 2;
+                        break;
+                    case "Subgerente":
+                        PuestoMvendedor = 3;
+                        break;
+                    case "Visual":
+                        PuestoMvendedor = 4;
+                        break;
+                    case "Maquillista Jr":
+                        PuestoMvendedor = 5;
+                        break;
+                    case "Senior Visual":
+                        PuestoMvendedor = 6;
+                        break;
+                    default:
+                        break;
+                }
+            }
             try {
-                Class.forName("org.postgres.Driver");
-                c = DriverManager.getConnection("jdbc::postgresql://localhost:5432/trendy_dev", "trendyuser", "tr3ndyus3r");
+                Class.forName("org.postgresql.Driver");
+                c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/trendy_dev", "trendyuser", "tr3ndyus3r");
                 c.setAutoCommit(false);
                 stmt = c.createStatement();
-                String sqlUpdate = "UPDATE empleado SET nombre=" + NombreVendedor +", apaterno";
-
+                String sqlUpdate = "UPDATE empleado set nombre='" + NombreVendedor + "', apaterno='" + Apaterno + "', amaterno='" + Amaterno + "', calle='" + Calle
+                        + "', colonia='" + Colonia + "', telefono=" + Telefono + ", estado='" + Estado + "', ciudad='" + Pais + "', codigop=" + CodigoPostal
+                        + ", email='" + Email + "', puesto=" + PuestoMvendedor + " WHERE claveven='" + claveDelVendedor + "';";
+                stmt.executeUpdate(sqlUpdate);
+                c.commit();
+                c.close();
+                System.out.println((char) 27 + "[32mUpgrade.... OK");
+                JOptionPane.showMessageDialog(rootPane, "Se ha actualizado el Registro de: \n" + NombreVendedor);
             } catch (ClassNotFoundException | SQLException ex) {
+                System.out.println((char)27 + "[33mError al Actualizar el vendedor: " + ex.getMessage());
+
             }
         }
     }
-
-    
 
     public void PostgreSSearchEmpleados() {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/trendy_dev", "trendyuser", "tr3ndyus3r");
             stmt = c.createStatement();
-            queryBuscaryModificarEmpleado = stmt.executeQuery("SELECT nombre,apaterno,amaterno,calle,colonia,ciudad,estado,email,codigop,claveven FROM empleado");
+            queryBuscaryModificarEmpleado = stmt.executeQuery("SELECT nombre,apaterno,amaterno,calle,colonia,ciudad,estado,email,codigop,claveven,puesto,telefono FROM empleado");
             rsm = queryBuscaryModificarEmpleado.getMetaData();
             ArrayList<Object[]> busarDatos = new ArrayList<>();
             while (queryBuscaryModificarEmpleado.next()) {
@@ -524,6 +557,10 @@ public class Vendedores extends javax.swing.JFrame {
         jTextModificarCodigoPostal = new javax.swing.JTextField();
         jButtonEditarVendedor = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
+        jTextModificarTelefono = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jComboModificarPuesto1 = new javax.swing.JComboBox<>();
         jPanelConsultar = new javax.swing.JPanel();
         jTextConsultarVendedorpor = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
@@ -778,7 +815,7 @@ public class Vendedores extends javax.swing.JFrame {
 
             },
             new String [] {
-                "NOMBRE", "AP. PATERNO", "AP. MATERNO", "CALLE", "COLONIA", "CIUDAD", "ESTADO", "EMAIL", "CP", "CLAVE EMPLEADO"
+                "NOMBRE", "AP. PATERNO", "AP. MATERNO", "CALLE", "COLONIA", "CIUDAD", "ESTADO", "EMAIL", "CP", "CLAVE EMPLEADO", "PUESTO", "TELEFONO"
             }
         ));
         jTableModificarRegsitros1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -821,23 +858,38 @@ public class Vendedores extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setText("Telefono:");
+
+        jTextModificarTelefono.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextModificarTelefonoActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Puesto:");
+
+        jComboModificarPuesto1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "----------", "Vendedora", "Gerente", "Subgerente", "Visual", "Maquillista Jr", "Senior Visual" }));
+        jComboModificarPuesto1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboModificarPuesto1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelModificarLayout = new javax.swing.GroupLayout(jPanelModificar);
         jPanelModificar.setLayout(jPanelModificarLayout);
         jPanelModificarLayout.setHorizontalGroup(
             jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelModificarLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelModificarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4)
-                    .addGroup(jPanelModificarLayout.createSequentialGroup()
+                .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator2)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelModificarLayout.createSequentialGroup()
                         .addComponent(jLabel20)
                         .addGap(18, 18, 18)
                         .addComponent(jTextBuscarYModificarEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanelModificarLayout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(jSeparator2))
-                    .addGroup(jPanelModificarLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelModificarLayout.createSequentialGroup()
                         .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelModificarLayout.createSequentialGroup()
                                 .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -855,7 +907,11 @@ public class Vendedores extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jLabel27)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextModificarColonia, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jTextModificarColonia, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextModificarTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanelModificarLayout.createSequentialGroup()
                                         .addComponent(jTextModificarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
@@ -880,8 +936,11 @@ public class Vendedores extends javax.swing.JFrame {
                                 .addComponent(jTextModificarCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(85, 85, 85)))
                         .addGap(55, 55, 55))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelModificarLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(jPanelModificarLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboModificarPuesto1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonEditarVendedor)))
                 .addContainerGap())
         );
@@ -901,7 +960,9 @@ public class Vendedores extends javax.swing.JFrame {
                     .addComponent(jLabel24)
                     .addComponent(jTextModificarCalle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel27)
-                    .addComponent(jTextModificarColonia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextModificarColonia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextModificarTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
@@ -912,9 +973,17 @@ public class Vendedores extends javax.swing.JFrame {
                     .addComponent(jLabel31)
                     .addComponent(jTextModificarCodigoPostal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextModificarCiudad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
-                .addComponent(jButtonEditarVendedor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelModificarLayout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(jButtonEditarVendedor)
+                        .addGap(25, 25, 25))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelModificarLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jComboModificarPuesto1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelModificarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -922,7 +991,7 @@ public class Vendedores extends javax.swing.JFrame {
                     .addComponent(jLabel20))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         jTableModificarRegistros.addTab("Modificar Empleados", jPanelModificar);
@@ -1109,11 +1178,142 @@ public class Vendedores extends javax.swing.JFrame {
         this.jTextModificarCalle.setText(jTableModificarRegsitros1.getValueAt(recoger, 3).toString());
         this.jTextModificarColonia.setText(jTableModificarRegsitros1.getValueAt(recoger, 4).toString());
         this.jTextModificarCiudad.setText(jTableModificarRegsitros1.getValueAt(recoger, 5).toString());
-        //this.jComboModificarEstado.set(jTableModificarRegsitros1.getValueAt(recoger, 6).toString());
+        switch (jTableModificarRegsitros1.getValueAt(recoger, 6).toString()) {
+            case "Aguascalientes":
+                this.jComboModificarEstado.setSelectedIndex(1);
+                break;
+            case "Baja California":
+                this.jComboModificarEstado.setSelectedIndex(2);
+                break;
+            case "Baja California Sur":
+                this.jComboModificarEstado.setSelectedIndex(3);
+                break;
+            case "Campeche":
+                this.jComboModificarEstado.setSelectedIndex(4);
+                break;
+            case "Chiapas":
+                this.jComboModificarEstado.setSelectedIndex(5);
+                break;
+            case "Chihuahua":
+                this.jComboModificarEstado.setSelectedIndex(6);
+                break;
+            case "Ciudad de México":
+                this.jComboModificarEstado.setSelectedIndex(7);
+                break;
+            case "Coahuila de Zaragoza":
+                this.jComboModificarEstado.setSelectedIndex(8);
+                break;
+            case "Colima":
+                this.jComboModificarEstado.setSelectedIndex(9);
+                break;
+            case "Durango":
+                this.jComboModificarEstado.setSelectedIndex(10);
+                break;
+            case "México":
+                this.jComboModificarEstado.setSelectedIndex(11);
+                break;
+            case "Guanajuato":
+                this.jComboModificarEstado.setSelectedIndex(12);
+                break;
+            case "Guerrero":
+                this.jComboModificarEstado.setSelectedIndex(13);
+                break;
+            case "Hidalgo":
+                this.jComboModificarEstado.setSelectedIndex(14);
+                break;
+            case "Jalisco":
+                this.jComboModificarEstado.setSelectedIndex(15);
+                break;
+            case "Michoacán":
+                this.jComboModificarEstado.setSelectedIndex(16);
+                break;
+            case "Morelos":
+                this.jComboModificarEstado.setSelectedIndex(17);
+                break;
+            case "Nayarit":
+                this.jComboModificarEstado.setSelectedIndex(18);
+                break;
+            case "Nuevo León":
+                this.jComboModificarEstado.setSelectedIndex(19);
+                break;
+            case "Oaxaca":
+                this.jComboModificarEstado.setSelectedIndex(20);
+                break;
+            case "Puebla":
+                this.jComboModificarEstado.setSelectedIndex(21);
+                break;
+            case "Querétaro":
+                this.jComboModificarEstado.setSelectedIndex(22);
+                break;
+            case "Quintana Roo":
+                this.jComboModificarEstado.setSelectedIndex(23);
+                break;
+            case "San Luis Potosí":
+                this.jComboModificarEstado.setSelectedIndex(24);
+                break;
+            case "Sinaloa":
+                this.jComboModificarEstado.setSelectedIndex(25);
+                break;
+            case "Sonora":
+                this.jComboModificarEstado.setSelectedIndex(26);
+                break;
+            case "Tabasco":
+                this.jComboModificarEstado.setSelectedIndex(27);
+                break;
+            case "Tamaulipas":
+                this.jComboModificarEstado.setSelectedIndex(28);
+                break;
+            case "Tlaxcala":
+                this.jComboModificarEstado.setSelectedIndex(29);
+                break;
+            case "Veracruz":
+                this.jComboModificarEstado.setSelectedIndex(30);
+                break;
+            case "Yucatán":
+                this.jComboModificarEstado.setSelectedIndex(31);
+                break;
+            case "Zacatecas":
+                this.jComboModificarEstado.setSelectedIndex(32);
+                break;
+            default:
+                break;
+        }
         this.jTextModificarEmail.setText(jTableModificarRegsitros1.getValueAt(recoger, 7).toString());
         this.jTextModificarCodigoPostal.setText(jTableModificarRegsitros1.getValueAt(recoger, 8).toString());
         claveDelVendedor = (jTableModificarRegsitros1.getValueAt(recoger, 9).toString());
+        switch (jTableModificarRegsitros1.getValueAt(recoger, 10).toString()) {
+            case "1":
+                this.jComboModificarPuesto1.setSelectedIndex(1);
+                break;
+            case "2":
+                this.jComboModificarPuesto1.setSelectedIndex(2);
+                break;
+            case "3":
+                this.jComboModificarPuesto1.setSelectedIndex(3);
+                break;
+            case "4":
+                this.jComboModificarPuesto1.setSelectedIndex(4);
+                break;
+            case "5":
+                this.jComboModificarPuesto1.setSelectedIndex(5);
+                break;
+            case "6":
+                this.jComboModificarPuesto1.setSelectedIndex(6);
+                break;
+            default:
+                break;
+        }
+        this.jTextModificarTelefono.setText(jTableModificarRegsitros1.getValueAt(recoger, 11).toString());
+        System.out.println("Clave del vendedor seleccionada: " + claveDelVendedor);
     }//GEN-LAST:event_jTableModificarRegsitros1MouseClicked
+
+    private void jTextModificarTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextModificarTelefonoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextModificarTelefonoActionPerformed
+
+    private void jComboModificarPuesto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboModificarPuesto1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboModificarPuesto1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1154,6 +1354,7 @@ public class Vendedores extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSalirdelSistema;
     private javax.swing.JComboBox<String> jComboEstado;
     private javax.swing.JComboBox<String> jComboModificarEstado;
+    private javax.swing.JComboBox<String> jComboModificarPuesto1;
     private javax.swing.JComboBox<String> jComboPuesto;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
@@ -1179,6 +1380,8 @@ public class Vendedores extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanelConsultar;
     private javax.swing.JPanel jPanelModificar;
@@ -1210,6 +1413,7 @@ public class Vendedores extends javax.swing.JFrame {
     private javax.swing.JTextField jTextModificarColonia;
     private javax.swing.JTextField jTextModificarEmail;
     private javax.swing.JTextField jTextModificarNombre;
+    private javax.swing.JTextField jTextModificarTelefono;
     private javax.swing.JTextField jTextNombreVendedor;
     private javax.swing.JTextField jTextPais;
     private javax.swing.JTextField jTextTelefono;
