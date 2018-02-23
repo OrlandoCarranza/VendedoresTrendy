@@ -24,7 +24,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -155,7 +154,7 @@ public class Vendedores extends javax.swing.JFrame {
             stmt.executeUpdate(sql1);
             stmt.close();
             System.out.println((char) 27 + "[32m         ¡Las Tablas se crearón correctamente!\n");
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             System.out.println((char) 27 + "[31mOcurrio un error al Crear las tablas: " + ex.getMessage());
         }
 
