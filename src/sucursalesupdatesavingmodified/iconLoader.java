@@ -12,6 +12,8 @@ public class iconLoader extends javax.swing.JFrame {
     private int auxiliar = 0;
     private final boolean ejecutado = false;
     hilo ejecutando = new hilo();
+    Vendedores objeto;
+    
 
     /**
      * Creates new form iconLoader
@@ -39,7 +41,9 @@ public class iconLoader extends javax.swing.JFrame {
         barra = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
@@ -114,20 +118,34 @@ public class iconLoader extends javax.swing.JFrame {
                     repaint();
                     switch (auxiliar) {
                         case 3:
+                            Thread.sleep(500);
                             text.setText("Cargando...");
+                            Thread.sleep(850);
+                            System.out.println("Comprobando si existe el gestor de base de datos:");
+                            break;
+                        case 10:
+                            Thread.sleep(730);
+                            text.setText("Iniciando las bases de datos...");
+                            Thread.sleep(600);
+                            System.out.println("Comprobando la conexion al gestor");
+                            Thread.sleep(520);
+                            objeto = new Vendedores();
+                            Thread.sleep(360);
                             break;
                         case 30:
-                            text.setText("Iniciando las bases de datos...");
-                            break;
-                        case 45:
+                            Thread.sleep(460);
                             text.setText("Cargando módulos..");
+                            Thread.sleep(700);
+                            System.out.println("cargando modulos");
+                            Thread.sleep(320);
                             break;
-                        case 55:
+                        case 49:
+                            Thread.sleep(345);
                             text.setText("Carga finalizada!!!");
-                            Vendedores objeto = new Vendedores();
-                            objeto.setVisible(true);
                             objeto.setLocationRelativeTo(iconLoader.this);
+                            Thread.sleep(1000);
                             iconLoader.this.dispose();
+                            objeto.setVisible(true);
                             break;
                     }
                     Thread.sleep(85);

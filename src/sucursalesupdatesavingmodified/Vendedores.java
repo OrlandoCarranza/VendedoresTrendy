@@ -108,7 +108,7 @@ public class Vendedores extends javax.swing.JFrame {
 
     public void PostgreSCrearBase() {
         System.out.println((char) 27 + "[32mEspere: ");
-        System.out.println((char) 27 + "[32m     Creando la base de datos....\n");
+        System.out.println((char) 27 + "[32m     ► Creando la base de datos....");
 //        JOptionPane.showInternalInputDialog(rootPane, "Espere...\nCreando la base de datos.");
         try {
             Class.forName("org.postgresql.Driver");
@@ -118,20 +118,21 @@ public class Vendedores extends javax.swing.JFrame {
             String cambiarPropietariodeTrendy_dev = "ALTER DATABASE trendy_dev OWNER TO trendyuser;";
             stmt.executeUpdate(crearBaseDeDatos);
             stmt.executeUpdate(cambiarPropietariodeTrendy_dev);
-            System.out.println((char) 27 + "[32m         Se ha creado la base de datos <<trendy_dev>>' con éxito.\n");
+            System.out.println((char) 27 + "[32m            Se ha creado la base de datos <<trendy_dev>>' con éxito.");
             stmt.getResultSet();
-            System.out.println((char) 27 + "[32m     Cambiando permisos de usuario.... OK!\n");
-            JOptionPane.showMessageDialog(null, "Se ha creado la base de datos con éxito.", "!Creation Successfully¡", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println((char) 27 + "[32m     ► Cambiando permisos de usuario.... OK!");
+//            System.out.println((char) 27 + "[32m    ¡La Base de Datos se ha creado con éxito.!");
+//            JOptionPane.showMessageDialog(null, "Se ha creado la base de datos con éxito.", "!Creation Successfully¡", JOptionPane.INFORMATION_MESSAGE);
             PostgreSCrearTablas();
             System.out.println((char) 27 + "[32m!Listo!\n\n");
         } catch (ClassNotFoundException | SQLException ex) {
-            System.out.println((char) 27 + "[31mError al crear la base de datos...");
-            System.out.println((char) 27 + "[31m     Descripccion del " + ex.getMessage() + "\n");
+            System.out.println((char) 27 + "[31m            ► " + ex.getMessage() + "\n");
+//            System.out.println((char) 27 + "[31m                  Descripccion del " + ex.getMessage() + "\n");
         }
     }
 
     public void PostgreSCrearTablas() {
-        System.out.println((char) 27 + "[32m     Creando la tabla Empleados...");
+        System.out.println((char) 27 + "[32m     ► Creando la tabla Empleados...");
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/trendy_dev", "trendyuser", "tr3ndyus3r");
@@ -153,7 +154,7 @@ public class Vendedores extends javax.swing.JFrame {
             String usuarioAdministrador = "Postgres";
             stmt.executeUpdate(sql1);
             stmt.close();
-            System.out.println((char) 27 + "[32m         ¡Las Tablas se crearón correctamente!\n");
+            System.out.println((char) 27 + "[32m            ¡Las Tablas se crearón correctamente!\n");
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println((char) 27 + "[31mOcurrio un error al Crear las tablas: " + ex.getMessage());
         }
