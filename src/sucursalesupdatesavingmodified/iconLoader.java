@@ -6,14 +6,18 @@
 package sucursalesupdatesavingmodified;
 
 import java.awt.Color;
+import java.io.File;
+import javax.swing.JOptionPane;
 
 public class iconLoader extends javax.swing.JFrame {
 
     private int auxiliar = 0;
     private final boolean ejecutado = false;
     hilo ejecutando = new hilo();
-    Vendedores objeto;
-    
+    LoginAdmin objeto;
+    Vendedores objet;
+    String comprobarFichero = "C:\\Program Files\\PostgreSQL\\9.6\\bin";
+    File fichero = new File(comprobarFichero);
 
     /**
      * Creates new form iconLoader
@@ -63,8 +67,8 @@ public class iconLoader extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        if(ejecutado == false){
-            boolean name = ejecutado == true; 
+        if (ejecutado == false) {
+            boolean name = ejecutado == true;
             barra.setMaximum(49);
             barra.setMinimum(0);
             barra.setStringPainted(true);
@@ -111,48 +115,54 @@ public class iconLoader extends javax.swing.JFrame {
 
         @Override
         public void run() {
-            try {
-                while (true) {
-                    auxiliar++;
-                    barra.setValue(auxiliar);
-                    repaint();
-                    switch (auxiliar) {
-                        case 3:
-                            Thread.sleep(500);
-                            text.setText("Cargando...");
-                            Thread.sleep(850);
-                            System.out.println("Comprobando si existe el gestor de base de datos:");
-                            break;
-                        case 10:
-                            Thread.sleep(730);
-                            text.setText("Iniciando las bases de datos...");
-                            Thread.sleep(600);
-                            System.out.println("Comprobando la conexion al gestor");
-                            Thread.sleep(520);
-                            objeto = new Vendedores();
-                            Thread.sleep(360);
-                            break;
-                        case 30:
-                            Thread.sleep(460);
-                            text.setText("Cargando módulos..");
-                            Thread.sleep(700);
-                            System.out.println("cargando modulos");
-                            Thread.sleep(320);
-                            break;
-                        case 49:
-                            Thread.sleep(345);
-                            text.setText("Carga finalizada!!!");
-                            objeto.setLocationRelativeTo(iconLoader.this);
-                            Thread.sleep(1000);
-                            iconLoader.this.dispose();
-                            objeto.setVisible(true);
-                            break;
+            if (fichero.exists()) {
+                try {
+                    while (true) {
+                        auxiliar++;
+                        barra.setValue(auxiliar);
+                        repaint();
+                        switch (auxiliar) {
+                            case 3:
+                                Thread.sleep(500);
+                                text.setText("Cargando...");
+                                Thread.sleep(850);
+                                System.out.println("Comprobando si existe el gestor de base de datos:");
+                                break;
+                            case 10:
+                                Thread.sleep(730);
+                                text.setText("Iniciando las bases de datos...");
+                                Thread.sleep(600);
+                                System.out.println("Comprobando la conexion al gestor");
+                                Thread.sleep(520);
+                                objet =  new Vendedores();
+                                objeto = new LoginAdmin();
+                                Thread.sleep(360);
+                                break;
+                            case 30:
+                                Thread.sleep(460);
+                                text.setText("Cargando módulos..");
+                                Thread.sleep(700);
+                                System.out.println("cargando modulos");
+                                Thread.sleep(320);
+                                break;
+                            case 49:
+                                Thread.sleep(345);
+                                text.setText("Carga finalizada!!!");
+                                objeto.setLocationRelativeTo(iconLoader.this);
+                                Thread.sleep(1000);
+                                iconLoader.this.dispose();
+                                objeto.setVisible(true);
+                                break; 
+                        }
+                        Thread.sleep(85);
                     }
-                    Thread.sleep(85);
-                }
-            } catch (InterruptedException ex) {
+                } catch (InterruptedException ex) {
 //                Logger.getLogger(iconLoader.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "No existe el Gestor de Base de datos PostgreSQL v9.6", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            
         }
     }
 

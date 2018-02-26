@@ -5,6 +5,8 @@
  */
 package sucursalesupdatesavingmodified;
 
+import java.awt.Color;
+
 /**
  *
  * @author Sistemas
@@ -18,16 +20,28 @@ public class LoginAdmin extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-    private void acceder(){
+
+    private void acceder() {
         char passwd[] = jPasswordUsuario.getPassword();
         String passUse = new String(passwd);
-        if(jTextUsurio.getText().equals("trendyadmin") && passUse.equals("admin123")){
+        if (jTextUsurio.getText().isEmpty() || jPasswordUsuario.getPassword().length == 0) {
+            jLabelError.setForeground(Color.red);
+            jLabelError.setText("Debe ingresar el usuario y/o contraseña.");
+        } else if (jTextUsurio.getText().equals("trendymx") && passUse.equals("trendymx2016")) {
             this.dispose();
             Vendedores formPrincipal = new Vendedores();
             formPrincipal.setVisible(true);
-        } else{
-            jLabelError.setText("Error en el Usuario y/o Contraseña");
+        } else {
+            if (!jTextUsurio.getText().equals("trendymx")) {
+                jLabelError.setForeground(Color.red);
+                jLabelError.setText("Error en el Usuario.");
+            } else if (!jPasswordUsuario.getPassword().equals("trendymx2016")) {
+                jLabelError.setForeground(Color.red);
+                jLabelError.setText("Error en la Contraseña.");
+            }
+
         }
+
     }
 
     /**
@@ -88,7 +102,7 @@ public class LoginAdmin extends javax.swing.JFrame {
                         .addComponent(jLabelError, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(27, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 135, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
