@@ -8,6 +8,7 @@ package sucursalesupdatesavingmodified;
 import java.awt.Color;
 import java.io.File;
 import javax.swing.JOptionPane;
+import jdk.nashorn.internal.ir.CatchNode;
 
 public class iconLoader extends javax.swing.JFrame {
 
@@ -123,7 +124,7 @@ public class iconLoader extends javax.swing.JFrame {
                         repaint();
                         switch (auxiliar) {
                             case 3:
-                                Thread.sleep(500);
+                                Thread.sleep(100);
                                 text.setText("Cargando...");
                                 Thread.sleep(850);
                                 System.out.println("Comprobando si existe el gestor de base de datos:");
@@ -160,7 +161,11 @@ public class iconLoader extends javax.swing.JFrame {
 //                Logger.getLogger(iconLoader.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                JOptionPane.showMessageDialog(rootPane, "No existe el Gestor de Base de datos PostgreSQL v9.6", "Error", JOptionPane.ERROR_MESSAGE);
+                iconLoader.this.dispose();
+               JOptionPane.showMessageDialog(null, "No tienes instalado PostgreSQL v9.6.6\n"  + "<html><a href=\"https://www.enterprisedb.com/downloads/postgres-postgresql-downloads#windows\">Da click aqui para instalar PostgreSQL</a></html>", "Error", JOptionPane.ERROR_MESSAGE);
+
+
+                System.exit(0);
             }
             
         }

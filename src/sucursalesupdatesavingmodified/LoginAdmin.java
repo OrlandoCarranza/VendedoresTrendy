@@ -27,17 +27,21 @@ public class LoginAdmin extends javax.swing.JFrame {
         if (jTextUsurio.getText().isEmpty() || jPasswordUsuario.getPassword().length == 0) {
             jLabelError.setForeground(Color.red);
             jLabelError.setText("Debe ingresar el usuario y/o contraseña.");
+            System.out.println((char) 27 + "[31mDebe ingresar el usuario y/o contraseña.");
         } else if (jTextUsurio.getText().equals("trendymx") && passUse.equals("trendymx2016")) {
+            System.out.println((char) 27 + "[32mAcceso Correcto.");
             this.dispose();
-            Vendedores formPrincipal = new Vendedores();
-            formPrincipal.setVisible(true);
+            Vendedores formPrincipal = new Vendedores(); 
+           formPrincipal.setVisible(true);
         } else {
             if (!jTextUsurio.getText().equals("trendymx")) {
                 jLabelError.setForeground(Color.red);
                 jLabelError.setText("Error en el Usuario.");
+                System.out.println((char) 27 + "[31mError en el Usuario.");
             } else if (!jPasswordUsuario.getPassword().equals("trendymx2016")) {
                 jLabelError.setForeground(Color.red);
                 jLabelError.setText("Error en la Contraseña.");
+                System.out.println((char) 27 + "[31mError en la Contraseña");
             }
 
         }
